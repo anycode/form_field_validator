@@ -38,16 +38,16 @@ abstract class TextFieldValidator extends FieldValidator<String?> {
 }
 
 class RequiredValidator extends TextFieldValidator {
+  bool emptyOnStart = true;
+
   RequiredValidator({required String errorText}) : super(errorText, required: true);
 
   @override
   bool isValid(String? value) {
-    return value!.isNotEmpty;
-  }
-
-  @override
-  String? call(String? value) {
-    return isValid(value) ? null : errorText;
+    if (emptyOnStart && (value?.isNotEmpty ?? false)) {
+      emptyOnStart = false;
+    }
+    return emptyOnStart || value!.isNotEmpty;
   }
 }
 
@@ -156,11 +156,6 @@ class MultiValidator extends FieldValidator<String?> {
       }
     }
     return true;
-  }
-
-  @override
-  String? call(dynamic value) {
-    return isValid(value) ? null : _errorText;
   }
 }
 
